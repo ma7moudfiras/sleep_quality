@@ -2,11 +2,12 @@
 # PyInstaller spec for Sleep Quality Analyzer backend.
 # Build from backend directory:
 #   pyinstaller --clean --noconfirm sleep_quality_backend.spec
+#
+# No NumPy/Pandas/SciKit-Learn — the ML is pure Python k-NN.
+# Expected EXE size: ~15 MB (vs ~200 MB with the old ML stack).
 
-from PyInstaller.utils.hooks import collect_data_files, collect_submodules
+from PyInstaller.utils.hooks import collect_submodules
 
-# Keep hidden imports targeted. Over-collecting full pandas/sklearn submodule trees can
-# duplicate NumPy binary extensions in some Windows builds.
 hiddenimports = []
 hiddenimports += collect_submodules('app')
 hiddenimports += [
@@ -20,31 +21,17 @@ hiddenimports += [
     'uvicorn.protocols.websockets.auto',
     'uvicorn.lifespan',
     'uvicorn.lifespan.on',
-    'sklearn.ensemble._forest',
-    'sklearn.tree._classes',
-    'sklearn.tree._tree',
-    'sklearn.preprocessing._data',
-    'sklearn.pipeline',
-    'sklearn.utils._typedefs',
-    'sklearn.utils._heap',
-    'sklearn.utils._sorting',
-    'sklearn.utils._vector_sentinel',
-    'sklearn.neighbors._partition_nodes',
-    'pandas._libs.tslibs.timedeltas',
-    'pandas._libs.tslibs.np_datetime',
-    'pandas._libs.tslibs.nattype',
-    'pandas._libs.tslibs.base',
 ]
 
-datas = []
-datas += [('data', 'data')]
-datas += [('app/static', 'app/static')]
-datas += collect_data_files('sklearn', include_py_files=False)
-datas += collect_data_files('pandas', include_py_files=False)
+datas = [
+    ('data', 'data'),
+    ('app/static', 'app/static'),
+]
 
 excludes = [
-    'matplotlib', 'IPython', 'jupyter', 'notebook', 'pytest', 'tkinter',
-    'PIL.ImageQt', 'PyQt5', 'PyQt6', 'PySide2', 'PySide6',
+    'numpy', 'scipy', 'pandas', 'sklearn', 'joblib', 'threadpoolctl',
+    'matplotlib', 'IPython', 'jupyter', 'notebook', 'pytest',
+    'tkinter', 'PIL', 'PyQt5', 'PyQt6', 'PySide2', 'PySide6',
 ]
 
 a = Analysis(
@@ -71,7 +58,7 @@ exe = EXE(
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=False,
+    upx=True,
     console=True,
     disable_windowed_traceback=False,
     argv_emulation=False,
@@ -84,7 +71,7 @@ coll = COLLECT(
     a.binaries,
     a.datas,
     strip=False,
-    upx=False,
+    upx=True,
     upx_exclude=[],
     name='sleep_quality_backend',
 )
