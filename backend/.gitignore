@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.venv/
+data/sleep_energy.db
+data/sleep_energy_model.joblib
+.env
