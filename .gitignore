@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv/
+.venv_exe/
+backend/.venv/
+backend/.venv_exe/
+backend/build/
+backend/dist/
+
+# PyInstaller outputs
+build/
+dist/
+*.spec.bak
+
+# Runtime data (user-generated, not source)
+backend/data/sleep_energy.db
+backend/data/sleep_energy_model.joblib
+backend/data/*.invalid_*.joblib
+
+# Release build outputs (generated, can be rebuilt)
+release_package/
+SleepQuality_Windows_Release.zip
+
+# Flutter / Dart
+frontend/.dart_tool/
+frontend/.packages
+frontend/build/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/pubspec.lock
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

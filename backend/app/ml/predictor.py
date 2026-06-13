@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any
 from datetime import datetime
 import joblib
@@ -8,6 +10,8 @@ from sklearn.preprocessing import StandardScaler
 
 from app.config import DATA_DIR, MODEL_PATH, SEED_DATA_PATH, KAGGLE_DATA_PATH, ensure_runtime_files
 from app.repository import get_logs_for_training, count_user_training_rows
+
+_cached_model: Pipeline | None = None
 
 FEATURE_COLUMNS = [
     "sleep_hours",
@@ -126,6 +130,7 @@ def _build_training_frame() -> tuple[pd.DataFrame, int, int]:
 
 
 def _fit_and_save_model(train_df: pd.DataFrame) -> Pipeline:
+    global _cached_model
     ensure_runtime_files()
 
     model = Pipeline(
@@ -144,6 +149,7 @@ def _fit_and_save_model(train_df: pd.DataFrame) -> Pipeline:
 
     model.fit(train_df[FEATURE_COLUMNS], train_df[TARGET_COLUMN])
     joblib.dump(model, MODEL_PATH)
+    _cached_model = model
     return model
 
 
@@ -189,10 +195,14 @@ def _quarantine_invalid_model(error: Exception) -> None:
 
 
 def load_or_train_model() -> Pipeline:
+    global _cached_model
+    if _cached_model is not None:
+        return _cached_model
     ensure_runtime_files()
     if MODEL_PATH.exists():
         try:
-            return joblib.load(MODEL_PATH)
+            _cached_model = joblib.load(MODEL_PATH)
+            return _cached_model
         except Exception as error:
             # Old model files can fail after EXE packaging or NumPy version changes.
             # Do not crash the server; quarantine the invalid model and retrain.

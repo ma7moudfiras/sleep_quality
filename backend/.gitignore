@@ -1,6 +1,10 @@
 __pycache__/
 *.pyc
 .venv/
+.venv_exe/
+build/
+dist/
 data/sleep_energy.db
 data/sleep_energy_model.joblib
+data/*.invalid_*.joblib
 .env

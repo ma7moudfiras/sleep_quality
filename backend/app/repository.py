@@ -105,6 +105,7 @@ def update_log_prediction(log_id: int, prediction: str) -> None:
     finally:
         conn.close()
 
+
 def update_sleep_log_feedback(log_id: int, actual_energy_level: str) -> dict[str, Any] | None:
     conn = get_connection()
     try:
@@ -139,3 +140,4 @@ def count_all_sleep_logs() -> int:
         return int(row["c"])
     finally:
         conn.close()
+
