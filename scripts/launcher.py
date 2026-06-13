@@ -81,14 +81,21 @@ def main() -> None:
         )
         return
 
-    # CREATE_NO_WINDOW prevents the backend console from appearing
+    # Start backend with no visible window. Redirect output to a log file
+    # next to the EXE so errors are not lost silently.
     CREATE_NO_WINDOW = 0x08000000
+    log_path = backend_exe.parent / "backend.log"
+    try:
+        log_file = open(log_path, "w", encoding="utf-8")
+    except OSError:
+        log_file = subprocess.DEVNULL  # type: ignore[assignment]
+
     backend_proc = subprocess.Popen(
         [str(backend_exe)],
         cwd=str(backend_exe.parent),
         creationflags=CREATE_NO_WINDOW,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        stdout=log_file,
+        stderr=log_file,
     )
 
     # --- Wait for backend to be healthy ---
