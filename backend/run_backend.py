@@ -1,9 +1,7 @@
 """Windows EXE entrypoint for Sleep Quality Backend.
 
-Important for PyInstaller:
-- Import the FastAPI app directly, not through the string "app.main:app".
-- Set runtime data folders before importing app.main.
-- Keep the process single and non-reloading.
+PyInstaller note: import the FastAPI app directly (not via string "app.main:app")
+so all modules are statically discoverable by the bundler.
 """
 
 from __future__ import annotations
@@ -23,10 +21,6 @@ def _prepare_runtime() -> None:
     base_dir = _runtime_dir()
     os.environ.setdefault("SLEEP_QUALITY_RUNTIME_DIR", str(base_dir))
     os.environ.setdefault("SLEEP_QUALITY_DATA_DIR", str(base_dir / "data"))
-    os.environ.setdefault("OMP_NUM_THREADS", "1")
-    os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
-    os.environ.setdefault("MKL_NUM_THREADS", "1")
-    os.environ.setdefault("NUMEXPR_NUM_THREADS", "1")
 
     if str(base_dir) not in sys.path:
         sys.path.insert(0, str(base_dir))
@@ -35,7 +29,6 @@ def _prepare_runtime() -> None:
 def main() -> None:
     _prepare_runtime()
 
-    # Import directly so PyInstaller can bundle app.main and avoid dynamic ASGI import issues.
     from app.main import app
     import uvicorn
 

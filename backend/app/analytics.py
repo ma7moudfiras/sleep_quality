@@ -21,7 +21,8 @@ def _sorted_logs_ascending(logs: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def _latest_n_logs(logs: list[dict[str, Any]], limit: int) -> list[dict[str, Any]]:
-    return list(reversed(get_all_sleep_logs()))[-limit:] if logs else []
+    # logs arrive newest-first from the DB; reverse to ascending, then take the most recent N.
+    return list(reversed(logs))[-limit:] if logs else []
 
 
 def _preferred_energy(log: dict[str, Any]) -> str | None:

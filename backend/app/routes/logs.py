@@ -1,7 +1,7 @@
 import sqlite3
 from fastapi import APIRouter, HTTPException, status
 
-from app.ml.predictor import predict_energy, train_model, retrain_model
+from app.ml.predictor import predict_energy, retrain_model
 from app.repository import (
     create_sleep_log,
     get_all_sleep_logs,
@@ -33,7 +33,7 @@ def save_daily_log(payload: SleepLogCreate):
         ) from exc
 
     if payload.actual_energy_level:
-        train_model()
+        retrain_model()
 
     return saved
 

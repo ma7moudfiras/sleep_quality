@@ -36,7 +36,6 @@ def get_data_dir() -> Path:
 
 DATA_DIR = get_data_dir()
 DB_PATH = DATA_DIR / "sleep_energy.db"
-MODEL_PATH = DATA_DIR / "sleep_energy_model.joblib"
 SEED_DATA_PATH = DATA_DIR / "initial_sleep_dataset.csv"
 KAGGLE_DATA_PATH = DATA_DIR / "kaggle_sleep_health.csv"
 
@@ -70,8 +69,4 @@ def ensure_runtime_files() -> None:
     """Create writable runtime directories and seed files for local and EXE runs."""
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     _copy_if_missing("initial_sleep_dataset.csv")
-    # Do not copy a bundled model into runtime by default. A model serialized
-    # with a different NumPy/scikit-learn environment may be incompatible inside
-    # the Windows EXE. The app can train a fresh model safely from seed data
-    # and user feedback when MODEL_PATH is missing.
     _copy_if_missing("sleep_energy.db")
